@@ -2,10 +2,9 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 
-
-def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer):
+def train(epoch, length, dataloader, model, optimizer, batch_size, writer):    
     model.train()
-    print("Now, training start ...")
+    print('Now, training start ...')
     sum_loss = 0.0
     sum_model_loss = 0.0
     sum_reg_loss = 0.0
@@ -30,17 +29,11 @@ def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer)
         step += 1.0
 
     pbar.close()
-    print(
-        "----------------- loss value:{}  model_loss value:{} contrastive_loss value:{} reg_loss value:{} --------------".format(
-            sum_loss / step,
-            sum_model_loss / step,
-            sum_contrastive_loss / step,
-            sum_reg_loss / step,
-        )
-    )
+    print('----------------- loss value:{}  model_loss value:{} contrastive_loss value:{} reg_loss value:{} --------------'
+        .format(sum_loss/step, sum_model_loss/step, sum_contrastive_loss/step, sum_reg_loss/step))
     # if writer is not None:
     #     writer.add_scalar('Loss/loss', sum_loss/step, epoch)
     #     writer.add_scalar('Loss/model_loss', sum_model_loss/step, epoch)
     #     writer.add_scalar('Loss/reg_loss', sum_reg_loss/step, epoch)
 
-    return loss, sum_mat / step
+    return loss, sum_mat/step
