@@ -8,6 +8,8 @@
     * n_features: Number of features
     * n_warm_items: Number of warm items
     * n_cold_items: Number of cold items
+    * n_val_cold_items: Number of cold items for the validation set,
+    * n_test_cold_items: Number of cold items for the test set,
     * n_train: Number of interactions in the train set
     * n_val: Number of interactions in the validation set
     * n_test: Number of interactions in the test set
