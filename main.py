@@ -120,7 +120,7 @@ if __name__ == "__main__":
     ##########################################################################################################################################
     print("Data loading ...")
 
-    dataset = load_dataset(data_path, has_v, has_a, has_t, devide=device)
+    dataset = load_dataset(data_path, has_v, has_a, has_t, device=device)
 
     n_users = dataset["n_users"]
     n_items = dataset["n_items"]

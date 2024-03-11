@@ -82,7 +82,7 @@ def convert_interactions_to_user_item_dict(interactions, n_user):
 
 class TrainingDataset(Dataset):
     def __init__(
-        self, num_user, num_item, user_item_dict, train_data, cold_set, num_neg, device
+        self, num_user, num_item, user_item_dict, train_data, cold_set, num_neg, device="cpu"
     ):
         self.train_data = train_data
         self.num_user = num_user
