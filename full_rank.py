@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import no_grad
 import numpy as np
-from Metric import rank, full_accuracy
+from metric import rank, full_accuracy
 
 
 def full_ranking(

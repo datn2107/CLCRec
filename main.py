@@ -98,14 +98,16 @@ if __name__ == "__main__":
     temp_value = args.temp_value
     step = args.step
 
-    has_v = True if args.has_v == "True" else False
-    has_a = True if args.has_a == "True" else False
-    has_t = True if args.has_t == "True" else False
+    has_v = args.has_v
+    has_a = args.has_a
+    has_t = args.has_t
 
     dim_e = args.dim_e
     writer = SummaryWriter()
 
     ##########################################################################################################################################
+    if os.path.exists(data_path + "/result") is False:
+        os.makedirs(data_path + "/result")
     with open(
         data_path + "/result/result{0}_{1}.txt".format(learning_rate, reg_weight), "w"
     ) as save_file:
@@ -119,12 +121,11 @@ if __name__ == "__main__":
     print("Data loading ...")
 
     dataset = load_dataset(data_path, has_v, has_a, has_t)
-    dataset = preprocess_data(dataset)
 
     n_users = dataset["n_users"]
     n_items = dataset["n_items"]
 
-    all_data = dataset["train_data"] + dataset["val_data"] + dataset["test_data"]
+    all_data = np.concatenate((dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0)
     user_item_all_dict = convert_interactions_to_user_item_dict(
         all_data, n_users
     )
@@ -132,12 +133,14 @@ if __name__ == "__main__":
         dataset["train_data"], n_users
     )
 
+    dataset = preprocess_data(dataset)
+
     train_dataset = TrainingDataset(
         n_users,
         n_items,
         user_item_all_dict,
-        data_path,
         dataset["train_data"],
+        dataset["cold_items"],
         num_neg,
     )
 
