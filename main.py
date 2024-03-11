@@ -121,17 +121,20 @@ if __name__ == "__main__":
     dataset = load_dataset(data_path, has_v, has_a, has_t)
     dataset = preprocess_data(dataset)
 
+    n_users = dataset["n_users"]
+    n_items = dataset["n_items"]
+
     all_data = dataset["train_data"] + dataset["val_data"] + dataset["test_data"]
     user_item_all_dict = convert_interactions_to_user_item_dict(
-        all_data, dataset["n_users"]
+        all_data, n_users
     )
     user_item_train_dict = convert_interactions_to_user_item_dict(
-        dataset["train_data"], dataset["n_users"]
+        dataset["train_data"], n_users
     )
 
     train_dataset = TrainingDataset(
-        dataset["n_users"],
-        dataset["n_items"],
+        n_users,
+        n_items,
         user_item_all_dict,
         data_path,
         dataset["train_data"],
@@ -145,8 +148,8 @@ if __name__ == "__main__":
     print("Data has been loaded.")
     ##########################################################################################################################################
     model = CLCRec(
-        dataset["n_users"],
-        dataset["n_items"],
+        n_users,
+        n_items,
         dataset["n_warm_items"],
         reg_weight,
         dim_e,

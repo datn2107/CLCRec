@@ -15,18 +15,18 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True):
     dataset["warm_items"] = np.load(data_path + "/warm_items.npy", allow_pickle=True)
     dataset["cold_items"] = np.load(data_path + "/cold_items.npy", allow_pickle=True)
 
-    dataset["train_data"] = np.load(data_path + "/train.npy", allow_pickle=True)
+    dataset["train_data"] = np.load(data_path + "/train_interactions.npy", allow_pickle=True)
 
-    dataset["val_data"] = np.load(data_path + "/val_full.npy", allow_pickle=True)
-    dataset["val_warm_data"] = np.load(data_path + "/val_warm.npy", allow_pickle=True)
-    dataset["val_cold_data"] = np.load(data_path + "/val_cold.npy", allow_pickle=True)
+    dataset["val_data"] = np.load(data_path + "/val_interactions.npy", allow_pickle=True)
+    dataset["val_warm_data"] = np.load(data_path + "/val_warm_interactions.npy", allow_pickle=True)
+    dataset["val_cold_data"] = np.load(data_path + "/val_cold_interactions.npy", allow_pickle=True)
 
-    dataset["test_data"] = np.load(data_path + "/test_full.npy", allow_pickle=True)
+    dataset["test_data"] = np.load(data_path + "/test_interactions.npy", allow_pickle=True)
     dataset["test_warm_data"] = np.load(
-        data_path + "/test_warm.npy", allow_pickle=True
+        data_path + "/test_warm_interactions.npy", allow_pickle=True
     )
     dataset["test_cold_data"] = np.load(
-        data_path + "/test_cold.npy", allow_pickle=True
+        data_path + "/test_cold_interactions.npy", allow_pickle=True
     )
 
     dataset["t_feat"] = np.load(data_path + "/t_features.npy") if has_t else None

@@ -10,26 +10,26 @@
     * n_cold_items: Number of cold items
     * n_val_cold_items: Number of cold items for the validation set,
     * n_test_cold_items: Number of cold items for the test set,
-    * n_train: Number of interactions in the train set
-    * n_val: Number of interactions in the validation set
-    * n_test: Number of interactions in the test set
-    * n_val_warm: Number of interactions in the validation set with warm items
-    * n_val_cold: Number of interactions in the validation set with cold items
-    * n_test_warm: Number of interactions in the test set with warm items
-    * n_test_cold: Number of interactions in the test set with cold items
+    * n_train_interactions: Number of interactions in the train set
+    * n_val_interactions: Number of interactions in the validation set
+    * n_test_interactions: Number of interactions in the test set
+    * n_val_warm_interactions: Number of interactions in the validation set with warm items
+    * n_val_cold_interactions: Number of interactions in the validation set with cold items
+    * n_test_warm_interactions: Number of interactions in the test set with warm items
+    * n_test_cold_interactions: Number of interactions in the test set with cold items
 
-* train_data (`train_data.npy`): Is a list of tuples (User ID, Item ID) that represents the interactions between users and items.
+* train_data (`train_interactions.npy`): Is a list of tuples (User ID, Item ID) that represents the interactions between users and items.
 
-* val_data (`val_full.npy`): Is a list of tuples (User ID, Item ID) that represents the interactions between users and items. Contains both warm and cold items.
-* val_warm_data (`val_warm.npy`): Is similar to val_data, but contains only warm items.
-* val_cold_data (`val_cold.npy`): Is similar to val_data, but contains only cold items.
+* val_data (`val_interactions.npy`): Is a list of tuples (User ID, Item ID) that represents the interactions between users and items. Contains both warm and cold items.
+* val_warm_data (`val_warm_interactions.npy`): Is similar to val_data, but contains only warm items.
+* val_cold_data (`val_cold_interactions.npy`): Is similar to val_data, but contains only cold items.
 
-* test_data (`test_full.npy`): Is similar to val_data, but contains only warm items.
-* test_warm_data (`test_warm.npy`): Is similar to val_data, but contains only warm items.
-* test_cold_data (`test_cold.npy`): Is similar to val_data, but contains only cold items.
+* test_data (`test_interactions.npy`): Is similar to val_data, but contains only warm items.
+* test_warm_data (`test_warm_interactions.npy`): Is similar to val_data, but contains only warm items.
+* test_cold_data (`test_cold_interactions.npy`): Is similar to val_data, but contains only cold items.
 
-* warm_set (`warm_set.npy`): Set of item ids that are in the train set.
-* cold_set (`warm_cold.npy`): Set of item ids that are not in the train set.
+* warm_set (`warm_items.npy`): Set of item ids that are in the train set.
+* cold_set (`cold_items.npy`): Set of item ids that are not in the train set.
 
 * t_features (`t_features.npy`): The matrix contains vectors text feature of items. The rows are the items and the columns are the features. (Optional)
 * a_features (`a_features.npy`): The matrix contains vectors audio feature of users. The rows are the users and the columns are the features. (Optional)
