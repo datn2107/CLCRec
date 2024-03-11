@@ -9,7 +9,7 @@ from torch_geometric.utils import scatter
 ##########################################################################
 
 class CLCRec(torch.nn.Module):
-    def __init__(self, num_user, num_item, num_warm_item, reg_weight, dim_E, v_feat, a_feat, t_feat, temp_value, num_neg, lr_lambda, num_sample=0.5):
+    def __init__(self, num_user, num_item, num_warm_item, reg_weight, dim_E, v_feat, a_feat, t_feat, temp_value, num_neg, lr_lambda, num_sample=0.5, device='cpu'):
         super(CLCRec, self).__init__()
         self.num_user = num_user
         self.num_item = num_item
@@ -22,6 +22,7 @@ class CLCRec(torch.nn.Module):
         self.id_embedding = nn.Parameter(nn.init.xavier_normal_(torch.rand((num_user+num_item, dim_E))))
         self.dim_feat = 0
         self.num_sample = num_sample
+        self.device = device
 
         if v_feat is not None:
             self.v_feat = F.normalize(v_feat, dim=1)
@@ -51,11 +52,11 @@ class CLCRec(torch.nn.Module):
         self.bias = nn.Parameter(nn.init.kaiming_normal_(torch.rand((dim_E, 1))))
         self.att_sum_layer = nn.Linear(dim_E, dim_E)
 
-        self.result = nn.init.xavier_normal_(torch.rand((num_user+num_item, dim_E))).cuda()
+        self.result = nn.init.xavier_normal_(torch.rand((num_user+num_item, dim_E))).to(self.device)
 
 
     def encoder(self, mask=None):
-        feature = torch.tensor([]).cuda()
+        feature = torch.tensor([]).to(self.device)
 
         if self.v_feat is not None:
             feature = torch.cat((feature, self.v_feat), dim=1)
@@ -101,7 +102,7 @@ class CLCRec(torch.nn.Module):
         head_embed = F.normalize(pos_item_embedding, dim=1)
 
         all_item_input = all_item_embedding.clone()
-        rand_index = torch.randint(all_item_embedding.size(0), (int(all_item_embedding.size(0)*self.num_sample), )).cuda()
+        rand_index = torch.randint(all_item_embedding.size(0), (int(all_item_embedding.size(0)*self.num_sample), )).to(self.device)
         all_item_input[rand_index] = all_item_feat[rand_index].clone()
 
         self.contrastive_loss_1 = self.loss_contrastive(head_embed, head_feat, self.temp_value)

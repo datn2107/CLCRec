@@ -3,7 +3,7 @@ import torch.nn as nn
 from tqdm import tqdm
 
 
-def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer):
+def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer, device="cpu"):
     model.train()
     print(f"Now, training start at epoch {epoch}...")
     sum_loss = 0.0
@@ -18,7 +18,7 @@ def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer)
 
     for user_tensor, item_tensor in dataloader:
         optimizer.zero_grad()
-        loss, model_loss, reg_loss = model.loss(user_tensor.cuda(), item_tensor.cuda())
+        loss, model_loss, reg_loss = model.loss(user_tensor.to(device), item_tensor.to(device))
         loss.backward(retain_graph=True)
         optimizer.step()
         sum_mat += model.mat.detach().cpu().item()

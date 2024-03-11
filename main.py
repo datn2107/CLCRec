@@ -120,7 +120,7 @@ if __name__ == "__main__":
     ##########################################################################################################################################
     print("Data loading ...")
 
-    dataset = load_dataset(data_path, has_v, has_a, has_t)
+    dataset = load_dataset(data_path, has_v, has_a, has_t, devide=device)
 
     n_users = dataset["n_users"]
     n_items = dataset["n_items"]
@@ -142,6 +142,7 @@ if __name__ == "__main__":
         dataset["train_data"],
         dataset["cold_items"],
         num_neg,
+        device
     )
 
     train_dataloader = DataLoader(
@@ -163,7 +164,7 @@ if __name__ == "__main__":
         num_neg,
         lr_lambda,
         num_sample,
-    ).cuda()
+    ).to(device)
 
     if args.path_weight_load is not None:
         model.load_state_dict(torch.load(args.path_weight_load))
@@ -189,6 +190,7 @@ if __name__ == "__main__":
             optimizer,
             batch_size,
             writer,
+            device
         )
 
         if torch.isnan(loss):

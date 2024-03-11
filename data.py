@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
 
-def load_dataset(data_path, has_v=True, has_a=True, has_t=True):
+def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
     dataset = np.load(data_path + "/metadata.npy", allow_pickle=True).item()
 
     dataset["warm_items"] = np.load(
@@ -43,9 +43,9 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True):
         data_path + "/test_cold_interactions.npy", allow_pickle=True
     )
 
-    dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")) if has_t else None
-    dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")) if has_a else None
-    dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features.npy")) if has_v else None
+    dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")).to(device) if has_t else None
+    dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")).to(device) if has_a else None
+    dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features.npy")).to(device) if has_v else None
 
     return dataset
 
@@ -59,29 +59,6 @@ def preprocess_data(dataset):
     )
     dataset["cold_items"] = set(
         item + dataset["n_users"] for item in dataset["cold_items"]
-    )
-
-    dataset["train_data"] = preprocess_interactions(
-        dataset["train_data"], dataset["n_users"]
-    )
-    dataset["val_data"] = preprocess_interactions(
-        dataset["val_data"], dataset["n_users"]
-    )
-    dataset["val_warm_data"] = preprocess_interactions(
-        dataset["val_warm_data"], dataset["n_users"]
-    )
-    dataset["val_cold_data"] = preprocess_interactions(
-        dataset["val_cold_data"], dataset["n_users"]
-    )
-
-    dataset["test_data"] = preprocess_interactions(
-        dataset["test_data"], dataset["n_users"]
-    )
-    dataset["test_warm_data"] = preprocess_interactions(
-        dataset["test_warm_data"], dataset["n_users"]
-    )
-    dataset["test_cold_data"] = preprocess_interactions(
-        dataset["test_cold_data"], dataset["n_users"]
     )
 
     return dataset
@@ -105,7 +82,7 @@ def convert_interactions_to_user_item_dict(interactions, n_user):
 
 class TrainingDataset(Dataset):
     def __init__(
-        self, num_user, num_item, user_item_dict, train_data, cold_set, num_neg
+        self, num_user, num_item, user_item_dict, train_data, cold_set, num_neg, device
     ):
         self.train_data = train_data
         self.num_user = num_user
@@ -113,6 +90,7 @@ class TrainingDataset(Dataset):
         self.num_neg = num_neg
         self.user_item_dict = user_item_dict
         self.cold_set = cold_set
+        self.device = device
 
         self.all_set = set(range(num_user, num_user + num_item)) - self.cold_set
 
@@ -125,7 +103,7 @@ class TrainingDataset(Dataset):
             list(self.all_set - set(self.user_item_dict[user])), self.num_neg
         )
 
-        user_tensor = torch.LongTensor([user] * (self.num_neg + 1))
-        item_tensor = torch.LongTensor([pos_item] + neg_item)
+        user_tensor = torch.LongTensor([user] * (self.num_neg + 1)).to(self.device)
+        item_tensor = torch.LongTensor([pos_item] + neg_item).to(self.device)
 
         return user_tensor, item_tensor
