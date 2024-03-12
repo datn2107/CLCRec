@@ -176,7 +176,7 @@ if __name__ == "__main__":
 
     # ##########################################################################################################################################
     max_precision = 0.0
-    max_recall = 0.0
+    max_recall = None
     max_NDCG = 0.0
     num_decreases = 0
     max_val_result = max_val_result_warm = max_val_result_cold = list()
@@ -285,7 +285,7 @@ if __name__ == "__main__":
             writer,
         )
 
-        if val_result[1] > max_recall:
+        if max_recall is None or val_result[1] > max_recall:
             pre_id_embedding = model.id_embedding
             max_recall = val_result[1]
             max_val_result = val_result
