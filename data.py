@@ -54,12 +54,12 @@ def preprocess_data(dataset):
     def preprocess_interactions(interactions, n_user):
         return {interaction[0]: interaction[1] + n_user for interaction in interactions}
 
-    dataset["warm_items"] = set(
+    dataset["warm_items"] = np.array([
         item + dataset["n_users"] for item in dataset["warm_items"]
-    )
-    dataset["cold_items"] = set(
+    ])
+    dataset["cold_items"] = np.array([
         item + dataset["n_users"] for item in dataset["cold_items"]
-    )
+    ])
 
     return dataset
 
@@ -89,7 +89,7 @@ class TrainingDataset(Dataset):
         self.num_item = num_item
         self.num_neg = num_neg
         self.user_item_dict = user_item_dict
-        self.cold_set = cold_set
+        self.cold_set = set(cold_set)
         self.device = device
 
         self.all_set = set(range(num_user, num_user + num_item)) - self.cold_set
