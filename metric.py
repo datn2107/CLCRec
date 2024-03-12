@@ -12,7 +12,7 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
     item_tensor = result[num_user:]
 
     start_index = 0
-    end_index = num_user if step == None else step
+    end_index = num_user if step == None else min(step, num_user)
 
     all_index_of_rank_list = torch.LongTensor([])
     while end_index <= num_user and start_index < end_index:
