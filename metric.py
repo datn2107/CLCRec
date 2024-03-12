@@ -4,10 +4,6 @@ import torch.nn.functional as F
 
 
 def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk):
-    # Note: The result is the matrix contains vectors feature of users and items
-    #           The first num_user rows are user vectors, and the rest are item vectors
-    #       The user_item_inter is a dictionary, the key is the user index, and the value is the set of items that the user interacted with
-    #       The mask_items is a set of items that should be masked when evaluating the model
     user_tensor = result[:num_user]
     item_tensor = result[num_user:]
 

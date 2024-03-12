@@ -196,7 +196,7 @@ if __name__ == "__main__":
         if torch.isnan(loss):
             print(model.result)
             with open(
-                data_path + "/result_{0}.txt".format(save_file_name), "a"
+                data_path + "/result/result_{0}.txt".format(save_file_name), "a"
             ) as save_file:
                 save_file.write(
                     "lr:{0} \t reg_weight:{1} is Nan\r\n".format(
@@ -299,12 +299,12 @@ if __name__ == "__main__":
             if args.path_weight_save is not None:
                 torch.save(
                     model.state_dict(),
-                    args.path_weight_save + "/model_{0}.pth".format(save_file_name),
+                    data_path + "result/model_{0}.pth".format(save_file_name),
                 )
         else:
             if num_decreases > 5:
                 with open(
-                    "./Data/" + data_path + "/result_{0}.txt".format(save_file_name),
+                    data_path + "result/result_{0}.txt".format(save_file_name),
                     "a",
                 ) as save_file:
                     save_file.write(str(args))
