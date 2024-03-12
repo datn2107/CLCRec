@@ -43,9 +43,9 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
         data_path + "/test_cold_interactions.npy", allow_pickle=True
     )
 
-    dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")).to(device) if has_t else None
-    dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")).to(device) if has_a else None
-    dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features.npy")).to(device) if has_v else None
+    dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")).type(torch.float32).to(device) if has_t else None
+    dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")).type(torch.float32).to(device) if has_a else None
+    dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features.npy")).type(torch.float32).to(device) if has_v else None
 
     return dataset
 
@@ -103,7 +103,7 @@ class TrainingDataset(Dataset):
             list(self.all_set - set(self.user_item_dict[user])), self.num_neg
         )
 
-        user_tensor = torch.LongTensor([user] * (self.num_neg + 1)).to(self.device)
-        item_tensor = torch.LongTensor([pos_item] + neg_item).to(self.device)
+        user_tensor = torch.tensor([user] * (self.num_neg + 1), dtype=torch.int64)
+        item_tensor = torch.tensor([pos_item] + neg_item, dtype=torch.int64)
 
         return user_tensor, item_tensor

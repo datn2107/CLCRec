@@ -76,9 +76,8 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
-    device = torch.device(
-        "cuda:0" if torch.cuda.is_available() and not args.no_cuda else "cpu"
-    )
+    device = "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
+
     ##########################################################################################################################################
     data_path = args.data_path
     print(data_path)
@@ -164,6 +163,7 @@ if __name__ == "__main__":
         num_neg,
         lr_lambda,
         num_sample,
+        device
     ).to(device)
 
     if args.path_weight_load is not None:
