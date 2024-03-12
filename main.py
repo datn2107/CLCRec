@@ -346,6 +346,5 @@ if __name__ == "__main__":
                             max_test_result_cold[2],
                         )
                     )
-                break
             else:
                 num_decreases += 1
