@@ -18,13 +18,14 @@ def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer,
 
     for user_tensor, item_tensor in dataloader:
         optimizer.zero_grad()
-        loss, model_loss, reg_loss = model.loss(user_tensor.to(device), item_tensor.to(device))
+        loss, model_loss, reg_loss, contrastive_loss = model.loss(user_tensor.to(device), item_tensor.to(device))
         loss.backward(retain_graph=True)
         optimizer.step()
         sum_mat += model.mat.detach().cpu().item()
         sum_loss += loss.cpu().item()
         sum_model_loss += model_loss.cpu().item()
         sum_reg_loss += reg_loss.cpu().item()
+        sum_contrastive_loss += contrastive_loss.cpu().item()
         pbar.update(batch_size)
         num_pbar += batch_size
         step += 1.0

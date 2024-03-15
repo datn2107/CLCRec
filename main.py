@@ -26,7 +26,8 @@ def init():
         "--no-cuda", action="store_true", default=False, help="Disables CUDA training."
     )
     parser.add_argument("--data-path", default="movielens", help="Dataset path")
-    parser.add_argument("--save-file-name", default="", help="Filename")
+    parser.add_argument("--result-filename", default=None, help="Filename for result")
+    parser.add_argument("--model-filename", default=None, help="Filename for model")
 
     parser.add_argument(
         "--path-weight-load", default=None, help="Loading weight filename."
@@ -44,10 +45,11 @@ def init():
     parser.add_argument("--num-epoch", type=int, default=1000, help="Epoch number.")
     parser.add_argument("--num-workers", type=int, default=1, help="Workers number.")
     parser.add_argument("--num-sample", type=float, default=0.5, help="Workers number.")
+    parser.add_argument("--early-stop", type=int, default=10, help="Early stop.")
 
     parser.add_argument("--dim-e", type=int, default=64, help="Embedding dimension.")
     parser.add_argument("--top-k", type=int, default=10, help="Workers number.")
-    parser.add_argument("--step", type=int, default=2000, help="Workers number.")
+    parser.add_argument("--step", type=int, default=2000, help="Evaluation Step.")
 
     parser.add_argument(
         "--has-v", default=False, action="store_true", help="Has Visual Features."
@@ -77,7 +79,6 @@ if __name__ == "__main__":
     ##########################################################################################################################################
     data_path = args.data_path
     print(data_path)
-    save_file_name = args.save_file_name
 
     learning_rate = args.lr
     lr_lambda = args.lr_lambda
@@ -87,6 +88,7 @@ if __name__ == "__main__":
     num_epoch = args.num_epoch
     num_neg = args.num_neg
     num_sample = args.num_sample
+    early_stop = args.early_stop
     top_k = args.top_k
     model_name = args.model_name
     temp_value = args.temp_value
@@ -99,11 +101,15 @@ if __name__ == "__main__":
     dim_e = args.dim_e
     writer = SummaryWriter()
 
+    result_filename = args.result_filename if args.result_filename is not None else "result_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+    model_filename = args.model_filename if args.model_filename is not None else "model_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+
     ##########################################################################################################################################
     if os.path.exists(data_path + "/result") is False:
         os.makedirs(data_path + "/result")
+
     with open(
-        data_path + "/result/result{0}_{1}.txt".format(learning_rate, reg_weight), "w"
+        data_path + "/result/" + result_filename, "w"
     ) as save_file:
         save_file.write(
             "---------------------------------lr: {0} \t reg_weight:{1} ---------------------------------\r\n".format(
@@ -191,7 +197,7 @@ if __name__ == "__main__":
         if torch.isnan(loss):
             print(model.result)
             with open(
-                data_path + "/result/result_{0}.txt".format(save_file_name), "a"
+                data_path + "/result/" + result_filename, "a"
             ) as save_file:
                 save_file.write(
                     "lr:{0} \t reg_weight:{1} is Nan\r\n".format(
@@ -293,15 +299,16 @@ if __name__ == "__main__":
 
             torch.save(
                 model.state_dict(),
-                data_path + "/result/model_{0}.pth".format(save_file_name),
+                data_path + "/result/" + model_filename,
             )
         else:
-            if num_decreases > 5:
+            if num_decreases > early_stop:
                 with open(
-                    data_path + "/result/result_{0}.txt".format(save_file_name),
+                    data_path + "/result/" + result_filename,
                     "a",
                 ) as save_file:
                     save_file.write(str(args))
+                    save_file.write("Epoch: {0}\n".format(epoch))
                     save_file.write(
                         "\r\n-----------Val Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
                             max_val_result[0], max_val_result[1], max_val_result[2]
@@ -340,5 +347,6 @@ if __name__ == "__main__":
                             max_test_result_cold[2],
                         )
                     )
+                break
             else:
                 num_decreases += 1

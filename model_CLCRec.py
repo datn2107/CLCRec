@@ -158,4 +158,4 @@ class CLCRec(torch.nn.Module):
     def loss(self, user_tensor, item_tensor):
         contrastive_loss, reg_loss = self.forward(user_tensor, item_tensor)
         reg_loss = self.reg_weight * reg_loss
-        return reg_loss + contrastive_loss, self.contrastive_loss_2 + reg_loss, reg_loss
+        return reg_loss + contrastive_loss, self.contrastive_loss_2 + reg_loss, reg_loss, contrastive_loss
