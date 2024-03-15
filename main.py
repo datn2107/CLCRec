@@ -26,15 +26,11 @@ def init():
         "--no-cuda", action="store_true", default=False, help="Disables CUDA training."
     )
     parser.add_argument("--data-path", default="movielens", help="Dataset path")
-    parser.add_argument("--save-file", default="", help="Filename")
+    parser.add_argument("--save-file-name", default="", help="Filename")
 
     parser.add_argument(
         "--path-weight-load", default=None, help="Loading weight filename."
     )
-    parser.add_argument(
-        "--path-weight-save", default=None, help="Writing weight filename."
-    )
-    parser.add_argument("--prefix", default="", help="Prefix of save_file.")
 
     parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate.")
     parser.add_argument("--lr-lambda", type=float, default=1, help="Weight loss one.")
@@ -81,7 +77,7 @@ if __name__ == "__main__":
     ##########################################################################################################################################
     data_path = args.data_path
     print(data_path)
-    save_file_name = args.save_file
+    save_file_name = args.save_file_name
 
     learning_rate = args.lr
     lr_lambda = args.lr_lambda
@@ -92,7 +88,6 @@ if __name__ == "__main__":
     num_neg = args.num_neg
     num_sample = args.num_sample
     top_k = args.top_k
-    prefix = args.prefix
     model_name = args.model_name
     temp_value = args.temp_value
     step = args.step
@@ -124,6 +119,8 @@ if __name__ == "__main__":
     n_users = dataset["n_users"]
     n_items = dataset["n_items"]
 
+    dataset = preprocess_data(dataset)
+
     all_data = np.concatenate((dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0)
     user_item_all_dict = convert_interactions_to_user_item_dict(
         all_data, n_users
@@ -131,8 +128,6 @@ if __name__ == "__main__":
     user_item_train_dict = convert_interactions_to_user_item_dict(
         dataset["train_data"], n_users
     )
-
-    dataset = preprocess_data(dataset)
 
     train_dataset = TrainingDataset(
         n_users,
@@ -296,11 +291,10 @@ if __name__ == "__main__":
             max_test_result_cold = test_result_cold
             num_decreases = 0
 
-            if args.path_weight_save is not None:
-                torch.save(
-                    model.state_dict(),
-                    data_path + "/result/model_{0}.pth".format(save_file_name),
-                )
+            torch.save(
+                model.state_dict(),
+                data_path + "/result/model_{0}.pth".format(save_file_name),
+            )
         else:
             if num_decreases > 5:
                 with open(

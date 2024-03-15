@@ -51,8 +51,9 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
 
 
 def preprocess_data(dataset):
-    def preprocess_interactions(interactions, n_user):
-        return {interaction[0]: interaction[1] + n_user for interaction in interactions}
+    def preprocess_interactions(interactions, n_users):
+        interactions[:, 1] += n_users
+        return interactions
 
     dataset["warm_items"] = np.array([
         item + dataset["n_users"] for item in dataset["warm_items"]
@@ -61,21 +62,17 @@ def preprocess_data(dataset):
         item + dataset["n_users"] for item in dataset["cold_items"]
     ])
 
+    for key in ["train_data", "val_data", "val_warm_data", "val_cold_data", "test_data", "test_warm_data", "test_cold_data"]:
+        dataset[key] = preprocess_interactions(dataset[key], dataset["n_users"])
+
     return dataset
 
 
-def convert_interactions_to_user_item_dict(interactions, n_user):
-    user_item_dict = {}
-    for interaction in interactions:
-        user = interaction[0]
-        item = interaction[1]
-        if user not in user_item_dict:
-            user_item_dict[user] = [item]
-        else:
-            user_item_dict[user].append(item)
+def convert_interactions_to_user_item_dict(interactions, n_users):
+    user_item_dict = {user_id: [] for user_id in range(n_users)}
 
-    for user in range(n_user) - user_item_dict.keys():
-        user_item_dict[user] = []
+    for interaction in interactions:
+        user_item_dict[interaction[0]].append(interaction[1])
 
     return user_item_dict
 
