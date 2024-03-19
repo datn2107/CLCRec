@@ -141,8 +141,17 @@ if __name__ == "__main__":
         dataset["train_data"], n_users
     )
 
-    for key in ["val_data", "val_warm_data", "val_cold_data", "test_data", "test_warm_data", "test_cold_data"]:
-        dataset[key + "_dict"] = convert_interactions_to_user_item_dict(dataset[key], n_users)
+    for key in [
+        "val_data",
+        "val_warm_data",
+        "val_cold_data",
+        "test_data",
+        "test_warm_data",
+        "test_cold_data",
+    ]:
+        dataset[key + "_dict"] = convert_interactions_to_user_item_dict(
+            dataset[key], n_users
+        )
 
     train_dataset = TrainingDataset(
         n_users,
@@ -220,7 +229,18 @@ if __name__ == "__main__":
             break
         torch.cuda.empty_cache()
 
-        # train_precision, train_recall, train_ndcg = full_ranking(epoch, model, user_item_inter, user_item_inter, True, step, topK, 'Train', writer)
+        train_precision, train_recall, train_ndcg = full_ranking(
+            epoch,
+            model,
+            user_item_train_dict,
+            user_item_train_dict,
+            None,
+            True,
+            step,
+            top_k,
+            "train/",
+            writer,
+        )
         val_result = full_ranking(
             epoch,
             model,

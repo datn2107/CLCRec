@@ -31,7 +31,7 @@ def full_ranking(
             top_k,
         )
         precision, recall, ndcg_score = full_accuracy(
-            data, all_index_of_rank_list, user_item_inter, is_training, top_k
+            data, all_index_of_rank_list, top_k
         )
 
         print(

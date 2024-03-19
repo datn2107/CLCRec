@@ -39,12 +39,9 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
     return all_index_of_rank_list
 
 
-def full_accuracy(data, all_index_of_rank_list, user_item_inter, is_training, topk):
+def full_accuracy(data, all_index_of_rank_list, topk):
     length = 0
     precision = recall = ndcg = 0.0
-
-    if is_training:
-        data = user_item_inter
 
     for row, col in data.items():
         user = row
