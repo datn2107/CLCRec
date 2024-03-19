@@ -142,7 +142,12 @@ if __name__ == "__main__":
     # )
 
     all_data = np.concatenate(
-        (dataset["train_all_warm_data"], dataset["val_cold_data"], dataset["test_cold_data"]), axis=0
+        (
+            dataset["train_all_warm_data"],
+            dataset["val_cold_data"],
+            dataset["test_cold_data"],
+        ),
+        axis=0,
     )
     user_item_all_dict = convert_interactions_to_user_item_dict(all_data, n_users)
     user_item_train_dict = convert_interactions_to_user_item_dict(
@@ -243,7 +248,7 @@ if __name__ == "__main__":
             model,
             user_item_train_dict,
             user_item_train_dict,
-            dataset['cold_items'],
+            dataset["cold_items"],
             True,
             step,
             top_k,
@@ -345,6 +350,26 @@ if __name__ == "__main__":
             )
         else:
             if num_decreases > early_stop:
+                with open(
+                    data_path + "/result/" + result_filename,
+                    "a",
+                ) as save_file:
+                    save_file.write("----------------------Best Result----------------------")
+                    save_file.write(str(args) + "\n")
+                    save_file.write(
+                        "\r\n-----------Val Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                            max_val_result_cold[0],
+                            max_val_result_cold[1],
+                            max_val_result_cold[2],
+                        )
+                    )
+                    save_file.write(
+                        "\r\n-----------Test Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                            max_test_result_cold[0],
+                            max_test_result_cold[1],
+                            max_test_result_cold[2],
+                        )
+                    )
                 break
             else:
                 num_decreases += 1
@@ -353,48 +378,24 @@ if __name__ == "__main__":
             data_path + "/result/" + result_filename,
             "a",
         ) as save_file:
-            save_file.write(str(args))
+            save_file.write(str(args) + "\n")
             save_file.write("Epoch: {0}\n".format(epoch))
             save_file.write(
                 "\r\n-----------Train Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
                     train_precision, train_recall, train_ndcg
                 )
             )
-            # save_file.write(
-            #     "\r\n-----------Val Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-            #         max_val_result[0], max_val_result[1], max_val_result[2]
-            #     )
-            # )
-            # save_file.write(
-            #     "\r\n-----------Val Warm Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-            #         max_val_result_warm[0],
-            #         max_val_result_warm[1],
-            #         max_val_result_warm[2],
-            #     )
-            # )
             save_file.write(
                 "\r\n-----------Val Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-                    max_val_result_cold[0],
-                    max_val_result_cold[1],
-                    max_val_result_cold[2],
+                    val_result_cold[0],
+                    val_result_cold[1],
+                    val_result_cold[2],
                 )
             )
-            # save_file.write(
-            #     "\r\n-----------Test Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-            #         max_test_result[0], max_test_result[1], max_test_result[2]
-            #     )
-            # )
-            # save_file.write(
-            #     "\r\n-----------Test Warm Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-            #         max_test_result_warm[0],
-            #         max_test_result_warm[1],
-            #         max_test_result_warm[2],
-            #     )
-            # )
             save_file.write(
                 "\r\n-----------Test Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-                    max_test_result_cold[0],
-                    max_test_result_cold[1],
-                    max_test_result_cold[2],
+                    test_result_cold[0],
+                    test_result_cold[1],
+                    test_result_cold[2],
                 )
             )
