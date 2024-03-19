@@ -77,6 +77,18 @@ def convert_interactions_to_user_item_dict(interactions, n_users):
     return user_item_dict
 
 
+def convert_interactions_to_user_item_list(interactions, n_users):
+    user_item_dict = convert_interactions_to_user_item_dict(interactions, n_users)
+
+    user_item_list = []
+    for user_id, list_items in user_item_dict.items():
+        if len(list_items) == 0:
+            continue
+        user_item_list.append([user_id] + list_items)
+
+    return user_item_list
+
+
 class TrainingDataset(Dataset):
     def __init__(
         self, num_user, num_item, user_item_dict, train_data, cold_set, num_neg, device="cpu"
@@ -100,7 +112,7 @@ class TrainingDataset(Dataset):
             list(self.all_set - set(self.user_item_dict[user])), self.num_neg
         )
 
-        user_tensor = torch.tensor([user] * (self.num_neg + 1), dtype=torch.int64)
-        item_tensor = torch.tensor([pos_item] + neg_item, dtype=torch.int64)
+        user_tensor = torch.LongTensor([user] * (self.num_neg + 1))
+        item_tensor = torch.LongTensor([pos_item] + neg_item)
 
         return user_tensor, item_tensor

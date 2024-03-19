@@ -101,16 +101,22 @@ if __name__ == "__main__":
     dim_e = args.dim_e
     writer = SummaryWriter()
 
-    result_filename = args.result_filename if args.result_filename is not None else "result_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
-    model_filename = args.model_filename if args.model_filename is not None else "model_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+    result_filename = (
+        args.result_filename
+        if args.result_filename is not None
+        else "result_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+    )
+    model_filename = (
+        args.model_filename
+        if args.model_filename is not None
+        else "model_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+    )
 
     ##########################################################################################################################################
     if os.path.exists(data_path + "/result") is False:
         os.makedirs(data_path + "/result")
 
-    with open(
-        data_path + "/result/" + result_filename, "w"
-    ) as save_file:
+    with open(data_path + "/result/" + result_filename, "w") as save_file:
         save_file.write(
             "---------------------------------lr: {0} \t reg_weight:{1} ---------------------------------\r\n".format(
                 learning_rate, reg_weight
@@ -127,13 +133,16 @@ if __name__ == "__main__":
 
     dataset = preprocess_data(dataset)
 
-    all_data = np.concatenate((dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0)
-    user_item_all_dict = convert_interactions_to_user_item_dict(
-        all_data, n_users
+    all_data = np.concatenate(
+        (dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0
     )
+    user_item_all_dict = convert_interactions_to_user_item_dict(all_data, n_users)
     user_item_train_dict = convert_interactions_to_user_item_dict(
         dataset["train_data"], n_users
     )
+
+    for key in ["val_data", "val_warm_data", "val_cold_data", "test_data", "test_warm_data", "test_cold_data"]:
+        dataset[key + "_dict"] = convert_interactions_to_user_item_dict(dataset[key], n_users)
 
     train_dataset = TrainingDataset(
         n_users,
@@ -142,7 +151,7 @@ if __name__ == "__main__":
         dataset["train_data"],
         dataset["cold_items"],
         num_neg,
-        device
+        device,
     )
 
     train_dataloader = DataLoader(
@@ -164,7 +173,7 @@ if __name__ == "__main__":
         num_neg,
         lr_lambda,
         num_sample,
-        device
+        device,
     ).to(device)
 
     if args.path_weight_load is not None:
@@ -172,8 +181,14 @@ if __name__ == "__main__":
 
     ##########################################################################################################################################
     optimizer = torch.optim.Adam(
-        [{"params": model.parameters(), "lr": learning_rate}]
-    )  # , 'weight_decay': reg_weight}])
+        [
+            {
+                "params": model.parameters(),
+                "lr": learning_rate,
+                "weight_decay": reg_weight,
+            }
+        ]
+    )
 
     # ##########################################################################################################################################
     max_precision = 0.0
@@ -191,14 +206,12 @@ if __name__ == "__main__":
             optimizer,
             batch_size,
             writer,
-            device
+            device,
         )
 
         if torch.isnan(loss):
             print(model.result)
-            with open(
-                data_path + "/result/" + result_filename, "a"
-            ) as save_file:
+            with open(data_path + "/result/" + result_filename, "a") as save_file:
                 save_file.write(
                     "lr:{0} \t reg_weight:{1} is Nan\r\n".format(
                         learning_rate, reg_weight
@@ -211,7 +224,7 @@ if __name__ == "__main__":
         val_result = full_ranking(
             epoch,
             model,
-            dataset["val_data"],
+            dataset["val_data_dict"],
             user_item_train_dict,
             None,
             False,
@@ -224,7 +237,7 @@ if __name__ == "__main__":
         val_result_warm = full_ranking(
             epoch,
             model,
-            dataset["val_warm_data"],
+            dataset["val_warm_data_dict"],
             user_item_train_dict,
             dataset["cold_items"],
             False,
@@ -237,7 +250,7 @@ if __name__ == "__main__":
         val_result_cold = full_ranking(
             epoch,
             model,
-            dataset["val_cold_data"],
+            dataset["val_cold_data_dict"],
             user_item_train_dict,
             dataset["warm_items"],
             False,
@@ -250,7 +263,7 @@ if __name__ == "__main__":
         test_result = full_ranking(
             epoch,
             model,
-            dataset["test_data"],
+            dataset["test_data_dict"],
             user_item_train_dict,
             None,
             False,
@@ -263,7 +276,7 @@ if __name__ == "__main__":
         test_result_warm = full_ranking(
             epoch,
             model,
-            dataset["test_warm_data"],
+            dataset["test_warm_data_dict"],
             user_item_train_dict,
             dataset["cold_items"],
             False,
@@ -276,7 +289,7 @@ if __name__ == "__main__":
         test_result_cold = full_ranking(
             epoch,
             model,
-            dataset["test_cold_data"],
+            dataset["test_cold_data_dict"],
             user_item_train_dict,
             dataset["warm_items"],
             False,
