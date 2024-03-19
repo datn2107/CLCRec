@@ -243,7 +243,7 @@ if __name__ == "__main__":
             model,
             user_item_train_dict,
             user_item_train_dict,
-            dataset['warm_items'],
+            dataset['cold_items'],
             True,
             step,
             top_k,
