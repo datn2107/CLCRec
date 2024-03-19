@@ -133,12 +133,20 @@ if __name__ == "__main__":
 
     dataset = preprocess_data(dataset)
 
+    # all_data = np.concatenate(
+    #     (dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0
+    # )
+    # user_item_all_dict = convert_interactions_to_user_item_dict(all_data, n_users)
+    # user_item_train_dict = convert_interactions_to_user_item_dict(
+    #     dataset["train_data"], n_users
+    # )
+
     all_data = np.concatenate(
-        (dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0
+        (dataset["train_all_warm_data"], dataset["val_cold_data"], dataset["test_cold_data"]), axis=0
     )
     user_item_all_dict = convert_interactions_to_user_item_dict(all_data, n_users)
     user_item_train_dict = convert_interactions_to_user_item_dict(
-        dataset["train_data"], n_users
+        dataset["train_all_warm_data"], n_users
     )
 
     for key in [
@@ -157,7 +165,7 @@ if __name__ == "__main__":
         n_users,
         n_items,
         user_item_all_dict,
-        dataset["train_data"],
+        dataset["train_all_warm_data"],
         dataset["cold_items"],
         num_neg,
         device,
@@ -207,7 +215,7 @@ if __name__ == "__main__":
     max_val_result = max_val_result_warm = max_val_result_cold = list()
     max_test_result = max_test_result_warm = max_test_result_cold = list()
     for epoch in range(num_epoch):
-        print("Start training epoch {0}...".format(epoch)
+        print("Start training epoch {0}...".format(epoch))
         loss, mat = train_epoch(
             epoch,
             len(train_dataset),
@@ -242,31 +250,31 @@ if __name__ == "__main__":
             "train/",
             writer,
         )
-        val_result = full_ranking(
-            epoch,
-            model,
-            dataset["val_data_dict"],
-            user_item_train_dict,
-            None,
-            False,
-            step,
-            top_k,
-            "val/",
-            writer,
-        )
+        # val_result = full_ranking(
+        #     epoch,
+        #     model,
+        #     dataset["val_data_dict"],
+        #     user_item_train_dict,
+        #     None,
+        #     False,
+        #     step,
+        #     top_k,
+        #     "val/",
+        #     writer,
+        # )
 
-        val_result_warm = full_ranking(
-            epoch,
-            model,
-            dataset["val_warm_data_dict"],
-            user_item_train_dict,
-            dataset["cold_items"],
-            False,
-            step,
-            top_k,
-            "val/warm_",
-            writer,
-        )
+        # val_result_warm = full_ranking(
+        #     epoch,
+        #     model,
+        #     dataset["val_warm_data_dict"],
+        #     user_item_train_dict,
+        #     dataset["cold_items"],
+        #     False,
+        #     step,
+        #     top_k,
+        #     "val/warm_",
+        #     writer,
+        # )
 
         val_result_cold = full_ranking(
             epoch,
@@ -281,31 +289,31 @@ if __name__ == "__main__":
             writer,
         )
 
-        test_result = full_ranking(
-            epoch,
-            model,
-            dataset["test_data_dict"],
-            user_item_train_dict,
-            None,
-            False,
-            step,
-            top_k,
-            "test/",
-            writer,
-        )
+        # test_result = full_ranking(
+        #     epoch,
+        #     model,
+        #     dataset["test_data_dict"],
+        #     user_item_train_dict,
+        #     None,
+        #     False,
+        #     step,
+        #     top_k,
+        #     "test/",
+        #     writer,
+        # )
 
-        test_result_warm = full_ranking(
-            epoch,
-            model,
-            dataset["test_warm_data_dict"],
-            user_item_train_dict,
-            dataset["cold_items"],
-            False,
-            step,
-            top_k,
-            "test/warm_",
-            writer,
-        )
+        # test_result_warm = full_ranking(
+        #     epoch,
+        #     model,
+        #     dataset["test_warm_data_dict"],
+        #     user_item_train_dict,
+        #     dataset["cold_items"],
+        #     False,
+        #     step,
+        #     top_k,
+        #     "test/warm_",
+        #     writer,
+        # )
 
         test_result_cold = full_ranking(
             epoch,
@@ -320,14 +328,14 @@ if __name__ == "__main__":
             writer,
         )
 
-        if max_recall is None or val_result[1] > max_recall:
+        if max_recall is None or val_result_cold[1] > max_recall:
             pre_id_embedding = model.id_embedding
-            max_recall = val_result[1]
-            max_val_result = val_result
-            max_val_result_warm = val_result_warm
+            max_recall = val_result_cold[1]
+            # max_val_result = val_result
+            # max_val_result_warm = val_result_warm
             max_val_result_cold = val_result_cold
-            max_test_result = test_result
-            max_test_result_warm = test_result_warm
+            # max_test_result = test_result
+            # max_test_result_warm = test_result_warm
             max_test_result_cold = test_result_cold
             num_decreases = 0
 
@@ -344,17 +352,22 @@ if __name__ == "__main__":
                     save_file.write(str(args))
                     save_file.write("Epoch: {0}\n".format(epoch))
                     save_file.write(
-                        "\r\n-----------Val Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-                            max_val_result[0], max_val_result[1], max_val_result[2]
+                        "\r\n-----------Train Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                            train_precision, train_recall, train_ndcg
                         )
                     )
-                    save_file.write(
-                        "\r\n-----------Val Warm Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-                            max_val_result_warm[0],
-                            max_val_result_warm[1],
-                            max_val_result_warm[2],
-                        )
-                    )
+                    # save_file.write(
+                    #     "\r\n-----------Val Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                    #         max_val_result[0], max_val_result[1], max_val_result[2]
+                    #     )
+                    # )
+                    # save_file.write(
+                    #     "\r\n-----------Val Warm Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                    #         max_val_result_warm[0],
+                    #         max_val_result_warm[1],
+                    #         max_val_result_warm[2],
+                    #     )
+                    # )
                     save_file.write(
                         "\r\n-----------Val Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
                             max_val_result_cold[0],
@@ -362,18 +375,18 @@ if __name__ == "__main__":
                             max_val_result_cold[2],
                         )
                     )
-                    save_file.write(
-                        "\r\n-----------Test Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-                            max_test_result[0], max_test_result[1], max_test_result[2]
-                        )
-                    )
-                    save_file.write(
-                        "\r\n-----------Test Warm Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
-                            max_test_result_warm[0],
-                            max_test_result_warm[1],
-                            max_test_result_warm[2],
-                        )
-                    )
+                    # save_file.write(
+                    #     "\r\n-----------Test Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                    #         max_test_result[0], max_test_result[1], max_test_result[2]
+                    #     )
+                    # )
+                    # save_file.write(
+                    #     "\r\n-----------Test Warm Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
+                    #         max_test_result_warm[0],
+                    #         max_test_result_warm[1],
+                    #         max_test_result_warm[2],
+                    #     )
+                    # )
                     save_file.write(
                         "\r\n-----------Test Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}-----------".format(
                             max_test_result_cold[0],
