@@ -22,8 +22,8 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
                     row -= start_index
                     col = torch.LongTensor(list(col)) - num_user
                     score_matrix[row][col] = MIN_VALUE
-            if mask_items is not None:
-                score_matrix[:, mask_items - num_user] = MIN_VALUE
+        if mask_items is not None:
+            score_matrix[:, mask_items - num_user] = MIN_VALUE
 
         _, index_of_rank_list = torch.topk(score_matrix, topk)
         all_index_of_rank_list = torch.cat(

@@ -18,6 +18,12 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
     dataset["cold_items"] = np.load(
         data_path + "/cold_items.npy", allow_pickle=True
     ).item()
+    dataset['val_cold_items'] = np.load(
+        data_path + "/val_cold_items.npy", allow_pickle=True
+    ).item()
+    dataset['test_cold_items'] = np.load(
+        data_path + "/test_cold_items.npy", allow_pickle=True
+    ).item()
 
     dataset["train_all_warm_data"] = np.load(
         data_path + "/train_all_warm_interactions.npy", allow_pickle=True
