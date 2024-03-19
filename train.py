@@ -32,7 +32,7 @@ def train_epoch(epoch, length, dataloader, model, optimizer, batch_size, writer,
 
     pbar.close()
     print(
-        "----------------- loss value:{}  model_loss value:{} contrastive_loss value:{} reg_loss value:{} --------------".format(
+        "----------------- loss:{}  model_loss:{} contrastive_loss:{} reg_loss:{} --------------".format(
             sum_loss / step,
             sum_model_loss / step,
             sum_contrastive_loss / step,
