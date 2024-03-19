@@ -70,6 +70,12 @@ def preprocess_data(dataset):
     dataset["cold_items"] = np.array([
         item + dataset["n_users"] for item in dataset["cold_items"]
     ])
+    dataset['val_cold_items'] = np.array([
+        item + dataset["n_users"] for item in dataset['val_cold_items']
+    ])
+    dataset['test_cold_items'] = np.array([
+        item + dataset["n_users"] for item in dataset['test_cold_items']
+    ])
 
     for key in ["train_all_warm_data", "train_data", "val_data", "val_warm_data", "val_cold_data", "test_data", "test_warm_data", "test_cold_data"]:
         dataset[key] = preprocess_interactions(dataset[key], dataset["n_users"])
