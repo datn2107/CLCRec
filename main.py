@@ -207,6 +207,7 @@ if __name__ == "__main__":
     max_val_result = max_val_result_warm = max_val_result_cold = list()
     max_test_result = max_test_result_warm = max_test_result_cold = list()
     for epoch in range(num_epoch):
+        print("Start training epoch {0}...".format(epoch)
         loss, mat = train_epoch(
             epoch,
             len(train_dataset),
