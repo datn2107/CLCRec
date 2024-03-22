@@ -52,3 +52,21 @@
 * cold_set: Set of item ids that are not in the train set.
 
 * result: The result is the matrix contains vectors feature of users and items. The first n_user rows are the users and the last n_item rows are the items. The columns are the features.
+
+
+# Example to Run the Codes
+The instruction of commands has been clearly stated in the codes.
+- Movielens dataset
+`python main.py --model_name='CLCRec' --l_r=0.001 --reg_weight=0.1 --num_workers=4 --num_neg=128 --has_a=True --has_t=True --has_v=True --lr_lambda=0.5 --temp_value=2.0 --num_sample=0.5`
+- Amazon dataset
+`python main.py --model_name='CLCRec' --data_path=amazon --l_r=0.001 --reg_weight=0.001 --num_workers=4 --num_neg=512 --has_v=True --lr_lambda=0.9  --num_sample=0.5`
+
+Some important arguments:
+
+- `lr_lambda` It specifics the value of lambda to balance the U-I and R-E mutual information.
+
+- `num_neg` This parameter indicates the number of negative sampling.
+
+- `num_sample` This parameter indicates the probability of hybrid contrastive training.
+
+- `temp_value` It specifics the temprature value in density ratio functions.

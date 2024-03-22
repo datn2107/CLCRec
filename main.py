@@ -47,7 +47,7 @@ def init():
     parser.add_argument("--num-sample", type=float, default=0.5, help="Workers number.")
     parser.add_argument("--early-stop", type=int, default=10, help="Early stop.")
 
-    parser.add_argument("--dim-e", type=int, default=64, help="Embedding dimension.")
+    parser.add_argument("--dim-e", type=int, default=128, help="Embedding dimension.")
     parser.add_argument("--top-k", type=int, default=10, help="Workers number.")
     parser.add_argument("--step", type=int, default=2000, help="Evaluation Step.")
 
