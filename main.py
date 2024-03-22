@@ -101,15 +101,16 @@ if __name__ == "__main__":
     dim_e = args.dim_e
     writer = SummaryWriter()
 
+
     result_filename = (
         args.result_filename
         if args.result_filename is not None
-        else "result_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+        else "result_lr_{0}_lrl_{1}_reg_{2}_num_neg_{3}_tmp_{4}".format(learning_rate, lr_lambda, reg_weight, num_neg, temp_value)
     )
     model_filename = (
         args.model_filename
         if args.model_filename is not None
-        else "model_{0}_{1}_{2}".format(learning_rate, reg_weight, num_neg)
+        else "model_lr_{0}_lrl_{1}_reg_{2}_num_neg_{3}_tmp_{4}".format(learning_rate, lr_lambda, reg_weight, num_neg, temp_value)
     )
 
     ##########################################################################################################################################
