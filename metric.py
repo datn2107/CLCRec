@@ -60,7 +60,7 @@ def full_accuracy(data, all_index_of_rank_list, topk):
 
         ndcg_score = 0.0
         max_ndcg_score = 0.0
-        for i in range(min(num_pos, topk)):
+        for i in range(min(num_hit, topk)):
             max_ndcg_score += 1 / math.log2(i + 2)
         if max_ndcg_score == 0:
             continue
