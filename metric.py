@@ -2,7 +2,7 @@ import torch
 import math
 import torch.nn.functional as F
 
-MIN_VALUE = 1e-15
+MIN_VALUE = -1e15
 
 def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk):
     user_tensor = result[:num_user]
