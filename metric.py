@@ -11,7 +11,7 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
     start_index = 0
     end_index = num_user if step == None else min(step, num_user)
 
-    all_score_matrix = torch.FloatTensor([])
+    all_score_matrix = torch.FloatTensor([]).to(user_tensor.device)
     all_index_of_rank_list = torch.LongTensor([])
     while end_index <= num_user and start_index < end_index:
         temp_user_tensor = user_tensor[start_index:end_index]
