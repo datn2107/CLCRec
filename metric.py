@@ -11,6 +11,7 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
     start_index = 0
     end_index = num_user if step == None else min(step, num_user)
 
+    all_score_matrix = torch.FloatTensor([])
     all_index_of_rank_list = torch.LongTensor([])
     while end_index <= num_user and start_index < end_index:
         temp_user_tensor = user_tensor[start_index:end_index]
@@ -25,6 +26,8 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
         if mask_items is not None:
             score_matrix[:, mask_items - num_user] = MIN_VALUE
 
+        all_score_matrix = torch.cat((all_score_matrix, score_matrix), dim=0)
+
         _, index_of_rank_list = torch.topk(score_matrix, topk)
         all_index_of_rank_list = torch.cat(
             (all_index_of_rank_list, index_of_rank_list.cpu() + num_user), dim=0
@@ -36,7 +39,7 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
         else:
             end_index = num_user
 
-    return all_index_of_rank_list
+    return all_index_of_rank_list, all_score_matrix
 
 
 def full_accuracy(data, all_index_of_rank_list, topk):

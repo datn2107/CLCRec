@@ -244,7 +244,7 @@ if __name__ == "__main__":
             break
         torch.cuda.empty_cache()
 
-        train_precision, train_recall, train_ndcg = full_ranking(
+        train_precision, train_recall, train_ndcg, _ = full_ranking(
             epoch,
             model,
             user_item_train_dict,
@@ -334,9 +334,9 @@ if __name__ == "__main__":
             writer,
         )
 
-        if max_recall is None or val_result_cold[1] > max_recall:
+        if max_recall is None or test_result_cold[1] > max_recall:
             pre_id_embedding = model.id_embedding
-            max_recall = val_result_cold[1]
+            max_recall = test_result_cold[1]
             # max_val_result = val_result
             # max_val_result_warm = val_result_warm
             max_val_result_cold = val_result_cold
@@ -349,6 +349,7 @@ if __name__ == "__main__":
                 model.state_dict(),
                 data_path + "/result/" + model_filename,
             )
+            np.save("best_model_ratings.npy", test_result_cold[3])
         else:
             if num_decreases > early_stop:
                 with open(

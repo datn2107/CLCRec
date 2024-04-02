@@ -21,7 +21,7 @@ def full_ranking(
     print(prefix + " start...")
     model.eval()
     with no_grad():
-        all_index_of_rank_list = rank(
+        all_index_of_rank_list, all_score_matrix = rank(
             model.num_user,
             user_item_inter,
             mask_items,
@@ -52,4 +52,4 @@ def full_ranking(
         #     #writer.add_embedding(model.a_rep)
         #     #writer.add_embedding(model.t_rep)
 
-        return [precision, recall, ndcg_score]
+        return precision, recall, ndcg_score, all_score_matrix.cpu().detach().numpy()
