@@ -78,6 +78,7 @@ if __name__ == "__main__":
 
     ##########################################################################################################################################
     data_path = args.data_path
+    result_path = os.path.join(data_path, "result", "CLCRec")
     print(data_path)
 
     learning_rate = args.lr
@@ -114,10 +115,10 @@ if __name__ == "__main__":
     )
 
     ##########################################################################################################################################
-    if os.path.exists(data_path + "/result") is False:
-        os.makedirs(data_path + "/result")
+    if os.path.exists(result_path) is False:
+        os.makedirs(result_path)
 
-    with open(data_path + "/result/" + result_filename, "w") as save_file:
+    with open(os.path.join(result_path, result_filename), "w") as save_file:
         save_file.write(
             "---------------------------------lr: {0} \t reg_weight:{1} ---------------------------------\r\n".format(
                 learning_rate, reg_weight
@@ -235,7 +236,7 @@ if __name__ == "__main__":
 
         if torch.isnan(loss):
             print(model.result)
-            with open(data_path + "/result/" + result_filename, "a") as save_file:
+            with open(os.path.join(result_path, result_filename), "a") as save_file:
                 save_file.write(
                     "lr:{0} \t reg_weight:{1} is Nan\r\n".format(
                         learning_rate, reg_weight
@@ -347,13 +348,13 @@ if __name__ == "__main__":
 
             torch.save(
                 model.state_dict(),
-                data_path + "/result/" + model_filename,
+                os.path.join(result_path, model_filename),
             )
             np.save("best_model_ratings.npy", test_result_cold[3])
         else:
             if num_decreases > early_stop:
                 with open(
-                    data_path + "/result/" + result_filename,
+                    os.path.join(result_path, result_filename),
                     "a",
                 ) as save_file:
                     save_file.write("----------------------Best Result----------------------")
@@ -377,7 +378,7 @@ if __name__ == "__main__":
                 num_decreases += 1
 
         with open(
-            data_path + "/result/" + result_filename,
+            os.path.join(result_path, result_filename),
             "a",
         ) as save_file:
             save_file.write(str(args) + "\n")
