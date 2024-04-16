@@ -29,8 +29,9 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
         all_score_matrix = torch.cat((all_score_matrix, score_matrix), dim=0)
 
         _, index_of_rank_list = torch.topk(score_matrix, topk)
+        index_of_rank_list = index_of_rank_list.cpu()
         all_index_of_rank_list = torch.cat(
-            (all_index_of_rank_list, index_of_rank_list.cpu() + num_user), dim=0
+            (all_index_of_rank_list, index_of_rank_list + num_user), dim=0
         )
 
         start_index = end_index
@@ -38,6 +39,9 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
             end_index += step
         else:
             end_index = num_user
+
+        del score_matrix, index_of_rank_list, temp_user_tensor
+        torch.cuda.empty_cache()
 
     return all_index_of_rank_list, all_score_matrix
 
