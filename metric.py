@@ -1,5 +1,6 @@
 import torch
 import math
+import gc
 import torch.nn.functional as F
 
 MIN_VALUE = -1e15
@@ -42,6 +43,7 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
 
         del score_matrix, index_of_rank_list, temp_user_tensor
         torch.cuda.empty_cache()
+        gc.collect()
 
     return all_index_of_rank_list, all_score_matrix
 

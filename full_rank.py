@@ -17,6 +17,7 @@ def full_ranking(
     top_k,
     prefix,
     writer=None,
+    need_score_matrix=False,
 ):
     print(prefix + " start...")
     model.eval()
@@ -33,6 +34,10 @@ def full_ranking(
         precision, recall, ndcg_score = full_accuracy(
             data, all_index_of_rank_list, top_k
         )
+
+        del all_index_of_rank_list
+        if not need_score_matrix:
+            del all_score_matrix
 
         print(
             "---------------------------------{0}-th Precition:{1:.4f} Recall:{2:.4f} NDCG:{3:.4f}---------------------------------".format(
@@ -52,4 +57,4 @@ def full_ranking(
         #     #writer.add_embedding(model.a_rep)
         #     #writer.add_embedding(model.t_rep)
 
-        return precision, recall, ndcg_score, all_score_matrix.cpu().detach().numpy()
+        return precision, recall, ndcg_score, all_score_matrix.cpu().detach().numpy() if need_score_matrix else None

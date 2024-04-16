@@ -333,6 +333,7 @@ if __name__ == "__main__":
             top_k,
             "test/cold_",
             writer,
+            True
         )
 
         if max_recall is None or test_result_cold[1] > max_recall:
