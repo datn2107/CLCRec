@@ -352,6 +352,7 @@ if __name__ == "__main__":
                 os.path.join(result_path, model_filename),
             )
             np.save("best_model_ratings.npy", test_result_cold[3])
+            del test_result_cold, val_result_cold
         else:
             if num_decreases > early_stop:
                 with open(
