@@ -54,7 +54,7 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
 
     dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")).type(torch.float32).to(device) if has_t else None
     dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")).type(torch.float32).to(device) if has_a else None
-    dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features.npy")).type(torch.float32).to(device) if has_v else None
+    dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features_512.npy")).type(torch.float32).to(device) if has_v else None
 
     return dataset
 
