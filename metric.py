@@ -64,7 +64,7 @@ def full_accuracy(data, all_index_of_rank_list, topk):
         items = set(items_list)
 
         num_hit = len(pos_items.intersection(items))
-        precision += float(num_hit / topk)
+        precision += float(num_hit / min(topk, num_pos)) 
         recall += float(num_hit / num_pos)
 
         ndcg_score = 0.0
