@@ -26,6 +26,7 @@ def init():
         "--no-cuda", action="store_true", default=False, help="Disables CUDA training."
     )
     parser.add_argument("--data-path", default="movielens", help="Dataset path")
+    parser.add_argument("--result-path", default="results", help="Result path")
     parser.add_argument("--result-filename", default=None, help="Filename for result")
     parser.add_argument("--model-filename", default=None, help="Filename for model")
 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
 
     ##########################################################################################################################################
     data_path = args.data_path
-    result_path = os.path.join(data_path, "result", "CLCRec")
+    result_path = args.result_path
     print(data_path)
 
     learning_rate = args.lr
@@ -115,8 +116,7 @@ if __name__ == "__main__":
     )
 
     ##########################################################################################################################################
-    if os.path.exists(result_path) is False:
-        os.makedirs(result_path)
+    os.makedirs(result_path, exist_ok=True)
 
     with open(os.path.join(result_path, result_filename), "w") as save_file:
         save_file.write(
