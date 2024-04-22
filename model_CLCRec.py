@@ -37,6 +37,7 @@ class CLCRec(torch.nn.Module):
         self.id_embedding = nn.Parameter(
             nn.init.xavier_normal_(torch.rand((num_user + num_item, dim_E)))
         )
+        assert torch.sum(torch.isnan(self.id_embedding)) == 0, "nan in id_embedding"
         self.dim_feat = 0
         self.num_sample = num_sample
         self.device = device
@@ -91,6 +92,9 @@ class CLCRec(torch.nn.Module):
 
         feature = F.leaky_relu(self.encoder_layer1(feature))
         feature = self.encoder_layer2(feature)
+
+        assert torch.sum(torch.isnan(feature)) == 0, "nan in feature"
+
         return feature
 
     def loss_contrastive(self, tensor_anchor, tensor_all, temp_value):

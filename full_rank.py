@@ -44,17 +44,5 @@ def full_ranking(
                 epoch, precision, recall, ndcg_score
             )
         )
-        # if writer is not None:
-        #     writer.add_scalar(prefix+'_Precition', precision, epoch)
-        #     writer.add_scalar(prefix+'_Recall', recall, epoch)
-        #     writer.add_scalar(prefix+'_NDCG', ndcg_score, epoch)
-
-        #     writer.add_histogram(prefix+'_visual_distribution', model.v_rep, epoch)
-        #     writer.add_histogram(prefix+'_acoustic_distribution', model.a_rep, epoch)
-        #     writer.add_histogram(prefix+'_textual_distribution', model.t_rep, epoch)
-
-        #     # writer.add_embedding(model.v_rep)
-        #     #writer.add_embedding(model.a_rep)
-        #     #writer.add_embedding(model.t_rep)
 
         return precision, recall, ndcg_score, all_score_matrix.cpu().detach().numpy() if need_score_matrix else None

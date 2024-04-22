@@ -66,6 +66,13 @@ def init():
     return args
 
 
+def args_to_string(args):
+    args_string = ""
+    for key, value in vars(args).items():
+        args_string += "{0}:{1} ".format(key, value)
+    return args_string
+
+
 if __name__ == "__main__":
     args = init()
 
@@ -109,20 +116,21 @@ if __name__ == "__main__":
         if args.result_filename is not None
         else "result_lr_{0}_lrl_{1}_reg_{2}_num_neg_{3}_tmp_{4}".format(learning_rate, lr_lambda, reg_weight, num_neg, temp_value)
     )
+    log_filepath = os.path.join(result_path, result_filename + ".txt")
+
     model_filename = (
         args.model_filename
         if args.model_filename is not None
         else "model_lr_{0}_lrl_{1}_reg_{2}_num_neg_{3}_tmp_{4}".format(learning_rate, lr_lambda, reg_weight, num_neg, temp_value)
     )
+    model_filepath = os.path.join(result_path, model_filename + ".pth")
 
     ##########################################################################################################################################
     os.makedirs(result_path, exist_ok=True)
 
-    with open(os.path.join(result_path, result_filename), "w") as save_file:
+    with open(log_filepath, "w") as save_file:
         save_file.write(
-            "---------------------------------lr: {0} \t reg_weight:{1} ---------------------------------\r\n".format(
-                learning_rate, reg_weight
-            )
+            args_to_string(args) + "\n"
         )
 
     ##########################################################################################################################################
@@ -134,14 +142,6 @@ if __name__ == "__main__":
     n_items = dataset["n_items"]
 
     dataset = preprocess_data(dataset)
-
-    # all_data = np.concatenate(
-    #     (dataset["train_data"], dataset["val_data"], dataset["test_data"]), axis=0
-    # )
-    # user_item_all_dict = convert_interactions_to_user_item_dict(all_data, n_users)
-    # user_item_train_dict = convert_interactions_to_user_item_dict(
-    #     dataset["train_data"], n_users
-    # )
 
     all_data = np.concatenate(
         (
@@ -236,7 +236,7 @@ if __name__ == "__main__":
 
         if torch.isnan(loss):
             print(model.result)
-            with open(os.path.join(result_path, result_filename), "a") as save_file:
+            with open(log_filepath, "a") as save_file:
                 save_file.write(
                     "lr:{0} \t reg_weight:{1} is Nan\r\n".format(
                         learning_rate, reg_weight
@@ -351,11 +351,11 @@ if __name__ == "__main__":
                 model.state_dict(),
                 os.path.join(result_path, model_filename),
             )
-            np.save("best_model_ratings.npy", test_result_cold[3])
+            np.save(os.path.join(result_path, "best_model_ratings.npy"), test_result_cold[3])
         else:
             if num_decreases > early_stop:
                 with open(
-                    os.path.join(result_path, result_filename),
+                    log_filepath,
                     "a",
                 ) as save_file:
                     save_file.write("----------------------Best Result----------------------")
@@ -379,7 +379,7 @@ if __name__ == "__main__":
                 num_decreases += 1
 
         with open(
-            os.path.join(result_path, result_filename),
+            log_filepath,
             "a",
         ) as save_file:
             save_file.write(str(args) + "\n")
