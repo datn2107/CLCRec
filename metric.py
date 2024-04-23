@@ -8,6 +8,8 @@ MIN_VALUE = -1e3
 def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk):
     user_tensor = result[:num_user]
     item_tensor = result[num_user:]
+    print(torch.min(user_tensor), torch.max(user_tensor))
+    print(torch.min(item_tensor), torch.max(item_tensor))
 
     start_index = 0
     end_index = num_user if step == None else min(step, num_user)
@@ -44,6 +46,8 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
         del score_matrix, index_of_rank_list, temp_user_tensor
         torch.cuda.empty_cache()
         gc.collect()
+
+    print(torch.min(all_score_matrix), torch.max(all_score_matrix))
 
     return all_index_of_rank_list, all_score_matrix
 
