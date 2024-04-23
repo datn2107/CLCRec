@@ -22,6 +22,8 @@ class CLCRec(torch.nn.Module):
         temp_value,
         num_neg,
         lr_lambda,
+        warm_items,
+        cold_items,
         num_sample=0.5,
         device="cpu",
     ):
@@ -34,10 +36,11 @@ class CLCRec(torch.nn.Module):
         self.reg_weight = reg_weight
         self.temp_value = temp_value
         self.dim_E = dim_E
+        self.warm_items = warm_items
+        self.cold_items = cold_items
         self.id_embedding = nn.Parameter(
             nn.init.xavier_normal_(torch.rand((num_user + num_item, dim_E)))
         )
-        assert torch.sum(torch.isnan(self.id_embedding)) == 0, "nan in id_embedding"
         self.dim_feat = 0
         self.num_sample = num_sample
         self.device = device
@@ -93,8 +96,6 @@ class CLCRec(torch.nn.Module):
         feature = F.leaky_relu(self.encoder_layer1(feature))
         feature = self.encoder_layer2(feature)
 
-        assert torch.sum(torch.isnan(feature)) == 0, "nan in feature"
-
         return feature
 
     def loss_contrastive(self, tensor_anchor, tensor_all, temp_value):
@@ -145,13 +146,15 @@ class CLCRec(torch.nn.Module):
             (torch.sqrt((user_embedding**2).sum(1))).mean()
             + (torch.sqrt((all_item_embedding**2).sum(1))).mean()
         ) / 2
-        self.result = torch.cat(
-            (
-                self.id_embedding[: self.num_user + self.num_warm_item],
-                feature[self.num_warm_item :],
-            ),
-            dim=0,
-        )
+        # self.result = torch.cat(
+        #     (
+        #         self.id_embedding[: self.num_user + self.num_warm_item],
+        #         feature[self.num_warm_item :],
+        #     ),
+        #     dim=0,
+        # )
+        self.result = self.id_embedding.clone()
+        self.result[self.cold_items] = feature[self.cold_items - self.num_user]
 
         return (
             self.contrastive_loss_1 * self.lr_lambda

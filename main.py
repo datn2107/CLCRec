@@ -196,6 +196,8 @@ if __name__ == "__main__":
         temp_value,
         num_neg,
         lr_lambda,
+        np.array(dataset["warm_items"]),
+        np.array(dataset["cold_items"]),
         num_sample,
         device,
     ).to(device)
