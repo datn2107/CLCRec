@@ -153,6 +153,7 @@ class CLCRec(torch.nn.Module):
         #     ),
         #     dim=0,
         # )
+        del self.result
         self.result = self.id_embedding.clone()
         self.result[self.cold_items] = feature[self.cold_items - self.num_user]
 
