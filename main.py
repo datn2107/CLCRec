@@ -61,6 +61,9 @@ def init():
     parser.add_argument(
         "--has-t", default=False, action="store_true", help="Has Textual Features."
     )
+    parser.add_argument(
+        "--has-oh", default=False, action="store_true", help="Has Onehot Features."
+    )
 
     args = parser.parse_args()
     return args
@@ -106,6 +109,7 @@ if __name__ == "__main__":
     has_v = args.has_v
     has_a = args.has_a
     has_t = args.has_t
+    has_oh = args.has_oh
 
     dim_e = args.dim_e
     writer = SummaryWriter()
@@ -136,7 +140,7 @@ if __name__ == "__main__":
     ##########################################################################################################################################
     print("Data loading ...")
 
-    dataset = load_dataset(data_path, has_v, has_a, has_t, device=device)
+    dataset = load_dataset(data_path, has_v, has_a, has_t, has_oh, device=device)
 
     n_users = dataset["n_users"]
     n_items = dataset["n_items"]
@@ -193,6 +197,7 @@ if __name__ == "__main__":
         dataset["v_feat"],
         dataset["a_feat"],
         dataset["t_feat"],
+        dataset["oh_feat"],
         temp_value,
         num_neg,
         lr_lambda,

@@ -19,6 +19,7 @@ class CLCRec(torch.nn.Module):
         v_feat,
         a_feat,
         t_feat,
+        oh_feat,
         temp_value,
         num_neg,
         lr_lambda,
@@ -63,6 +64,12 @@ class CLCRec(torch.nn.Module):
         else:
             self.t_feat = None
 
+        if oh_feat is not None:
+            self.oh_feat = oh_feat
+            self.dim_feat += self.oh_feat.size(1)
+        else:
+            self.oh_feat = None
+
         self.MLP = nn.Linear(dim_E, dim_E)
 
         self.encoder_layer1 = nn.Linear(self.dim_feat, 256)
@@ -92,6 +99,9 @@ class CLCRec(torch.nn.Module):
 
         if self.t_feat is not None:
             feature = torch.cat((feature, self.t_feat), dim=1)
+
+        if self.oh_feat is not None:
+            feature = torch.cat((feature, self.oh_feat), dim=1)
 
         feature = F.leaky_relu(self.encoder_layer1(feature))
         feature = self.encoder_layer2(feature)
@@ -146,13 +156,7 @@ class CLCRec(torch.nn.Module):
             (torch.sqrt((user_embedding**2).sum(1))).mean()
             + (torch.sqrt((all_item_embedding**2).sum(1))).mean()
         ) / 2
-        # self.result = torch.cat(
-        #     (
-        #         self.id_embedding[: self.num_user + self.num_warm_item],
-        #         feature[self.num_warm_item :],
-        #     ),
-        #     dim=0,
-        # )
+
         del self.result
         self.result = self.id_embedding.clone()
         self.result[self.cold_items] = feature[self.cold_items - self.num_user]

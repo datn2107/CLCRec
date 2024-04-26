@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
 
-def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
+def load_dataset(data_path, has_v=False, has_a=False, has_t=False, has_oh=False, device="cpu"):
     dataset = np.load(data_path + "/metadata.npy", allow_pickle=True).item()
 
     dataset["warm_items"] = np.load(
@@ -55,6 +55,7 @@ def load_dataset(data_path, has_v=True, has_a=True, has_t=True, device="cpu"):
     dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")).type(torch.float32).to(device) if has_t else None
     dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")).type(torch.float32).to(device) if has_a else None
     dataset["v_feat"] = torch.from_numpy(np.load(data_path + "/v_features_512.npy")).type(torch.float32).to(device) if has_v else None
+    dataset["oh_feat"] = torch.from_numpy(np.load(data_path + "/onehot_features.npy")).type(torch.float32).to(device) if has_oh else None
 
     return dataset
 
