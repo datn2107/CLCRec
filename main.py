@@ -344,7 +344,6 @@ if __name__ == "__main__":
         )
 
         if max_recall is None or test_result_cold[1] > max_recall:
-            pre_id_embedding = model.id_embedding
             max_recall = test_result_cold[1]
             # max_val_result = val_result
             # max_val_result_warm = val_result_warm
