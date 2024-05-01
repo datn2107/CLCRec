@@ -264,31 +264,6 @@ if __name__ == "__main__":
             "train/",
             writer,
         )
-        # val_result = full_ranking(
-        #     epoch,
-        #     model,
-        #     dataset["val_data_dict"],
-        #     user_item_train_dict,
-        #     None,
-        #     False,
-        #     step,
-        #     top_k,
-        #     "val/",
-        #     writer,
-        # )
-
-        # val_result_warm = full_ranking(
-        #     epoch,
-        #     model,
-        #     dataset["val_warm_data_dict"],
-        #     user_item_train_dict,
-        #     dataset["cold_items"],
-        #     False,
-        #     step,
-        #     top_k,
-        #     "val/warm_",
-        #     writer,
-        # )
 
         val_result_cold = full_ranking(
             epoch,
@@ -303,32 +278,6 @@ if __name__ == "__main__":
             writer,
         )
 
-        # test_result = full_ranking(
-        #     epoch,
-        #     model,
-        #     dataset["test_data_dict"],
-        #     user_item_train_dict,
-        #     None,
-        #     False,
-        #     step,
-        #     top_k,
-        #     "test/",
-        #     writer,
-        # )
-
-        # test_result_warm = full_ranking(
-        #     epoch,
-        #     model,
-        #     dataset["test_warm_data_dict"],
-        #     user_item_train_dict,
-        #     dataset["cold_items"],
-        #     False,
-        #     step,
-        #     top_k,
-        #     "test/warm_",
-        #     writer,
-        # )
-
         test_result_cold = full_ranking(
             epoch,
             model,
@@ -340,7 +289,7 @@ if __name__ == "__main__":
             top_k,
             "test/cold_",
             writer,
-            True
+            False
         )
 
         if max_recall is None or test_result_cold[1] > max_recall:
@@ -357,7 +306,7 @@ if __name__ == "__main__":
                 model.state_dict(),
                 os.path.join(result_path, model_filename),
             )
-            np.save(os.path.join(result_path, "best_model_ratings.npy"), test_result_cold[3])
+            # np.save(os.path.join(result_path, "best_model_ratings.npy"), test_result_cold[3])
         else:
             if num_decreases > early_stop:
                 with open(
@@ -411,3 +360,28 @@ if __name__ == "__main__":
             )
 
         del test_result_cold, val_result_cold
+
+
+    model.load_state_dict(torch.load(os.path.join(result_path, model_filename)))
+    test_result_cold = full_ranking(
+        epoch,
+        model,
+        dataset["test_cold_data_dict"],
+        user_item_train_dict,
+        np.concatenate([dataset["warm_items"], dataset["val_cold_items"]]),
+        False,
+        step,
+        top_k,
+        "test/cold_",
+        writer,
+        True
+    )
+
+    np.save(os.path.join(result_path, "best_model_ratings.npy"), test_result_cold[3])
+    print("Final Result:")
+    print(
+        "Test Cold Precition:{0:.4f} Recall:{1:.4f} NDCG:{2:.4f}".format(
+            test_result_cold[0], test_result_cold[1], test_result_cold[2]
+        )
+    )
+    print("Finish training")
