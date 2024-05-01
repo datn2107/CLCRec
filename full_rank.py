@@ -30,14 +30,13 @@ def full_ranking(
             is_training,
             step,
             top_k,
+            return_score=need_score_matrix,
         )
         precision, recall, ndcg_score = full_accuracy(
             data, all_index_of_rank_list, top_k
         )
 
         del all_index_of_rank_list
-        if not need_score_matrix:
-            del all_score_matrix
 
         print(
             "---------------------------------{0}-th Precition:{1:.4f} Recall:{2:.4f} NDCG:{3:.4f}---------------------------------".format(

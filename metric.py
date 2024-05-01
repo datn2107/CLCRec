@@ -5,16 +5,15 @@ import torch.nn.functional as F
 
 MIN_VALUE = -1e3
 
-def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk):
+def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk, return_score=False):
     user_tensor = result[:num_user]
     item_tensor = result[num_user:]
-    print(torch.min(user_tensor), torch.max(user_tensor))
-    print(torch.min(item_tensor), torch.max(item_tensor))
 
     start_index = 0
     end_index = num_user if step == None else min(step, num_user)
 
-    all_score_matrix = torch.FloatTensor([]).to(user_tensor.device)
+    all_score_matrix = torch.FloatTensor([]).to(user_tensor.device) if return_score else None
+
     all_index_of_rank_list = torch.LongTensor([])
     while end_index <= num_user and start_index < end_index:
         temp_user_tensor = user_tensor[start_index:end_index]
@@ -29,7 +28,8 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
         if mask_items is not None:
             score_matrix[:, mask_items - num_user] = MIN_VALUE
 
-        all_score_matrix = torch.cat((all_score_matrix, score_matrix), dim=0)
+        if return_score:
+            all_score_matrix = torch.cat((all_score_matrix, score_matrix), dim=0)
 
         _, index_of_rank_list = torch.topk(score_matrix, topk)
         index_of_rank_list = index_of_rank_list.cpu()
@@ -46,8 +46,6 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk)
         del score_matrix, index_of_rank_list, temp_user_tensor
         torch.cuda.empty_cache()
         gc.collect()
-
-    print(torch.min(all_score_matrix), torch.max(all_score_matrix))
 
     return all_index_of_rank_list, all_score_matrix
 
