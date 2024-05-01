@@ -22,7 +22,7 @@ def full_ranking(
     print(prefix + " start...")
     model.eval()
     with no_grad():
-        all_index_of_rank_list, all_score_matrix = rank(
+        all_index_of_rank_list, all_score_matrix_cuda = rank(
             model.num_user,
             user_item_inter,
             mask_items,
@@ -44,4 +44,7 @@ def full_ranking(
             )
         )
 
-        return precision, recall, ndcg_score, all_score_matrix.cpu().detach().numpy() if need_score_matrix else None
+        all_score_matrix = all_score_matrix_cuda.cpu().detach().numpy() if need_score_matrix else None
+        del all_score_matrix_cuda
+        
+        return precision, recall, ndcg_score, all_score_matrix
