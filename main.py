@@ -127,7 +127,7 @@ if __name__ == "__main__":
         if args.model_filename is not None
         else "model_lr_{0}_lrl_{1}_reg_{2}_num_neg_{3}_tmp_{4}".format(learning_rate, lr_lambda, reg_weight, num_neg, temp_value)
     )
-    model_filepath = os.path.join(result_path, model_filename + ".pth")
+    model_filepath = os.path.join(result_path, model_filename + ".pt")
 
     ##########################################################################################################################################
     os.makedirs(result_path, exist_ok=True)
@@ -304,7 +304,7 @@ if __name__ == "__main__":
 
             print("Save best model as {0} with recall {1}".format(model_filepath, max_recall))
             torch.save(
-                model.state_dict(),
+                model.result,
                 model_filepath,
             )
             # np.save(os.path.join(result_path, "best_model_ratings.npy"), test_result_cold[3])
@@ -380,7 +380,7 @@ if __name__ == "__main__":
         num_sample,
         device,
     ).to(device)
-    model.load_state_dict(torch.load(model_filepath))
+    model.result = torch.load(model_filepath)
     test_result_cold = full_ranking(
         -1,
         model,
