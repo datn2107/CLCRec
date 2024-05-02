@@ -132,7 +132,7 @@ if __name__ == "__main__":
     ##########################################################################################################################################
     os.makedirs(result_path, exist_ok=True)
 
-    with open(log_filepath, "w") as save_file:
+    with open(log_filepath, "a") as save_file:
         save_file.write(
             args_to_string(args) + "\n"
         )
@@ -304,7 +304,7 @@ if __name__ == "__main__":
 
             torch.save(
                 model.state_dict(),
-                os.path.join(result_path, model_filename),
+                model_filepath,
             )
             # np.save(os.path.join(result_path, "best_model_ratings.npy"), test_result_cold[3])
         else:
@@ -361,10 +361,9 @@ if __name__ == "__main__":
 
         del test_result_cold, val_result_cold
 
-
-    model.load_state_dict(torch.load(os.path.join(result_path, model_filename)))
+    model.load_state_dict(torch.load(model_filepath))
     test_result_cold = full_ranking(
-        epoch,
+        -1,
         model,
         dataset["test_cold_data_dict"],
         user_item_train_dict,
