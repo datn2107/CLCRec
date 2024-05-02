@@ -302,6 +302,7 @@ if __name__ == "__main__":
             max_test_result_cold = test_result_cold
             num_decreases = 0
 
+            print("Save best model as {0} with recall {1}".format(model_filepath, max_recall))
             torch.save(
                 model.state_dict(),
                 model_filepath,
@@ -361,6 +362,24 @@ if __name__ == "__main__":
 
         del test_result_cold, val_result_cold
 
+    model = CLCRec(
+        n_users,
+        n_items,
+        dataset["n_warm_items"],
+        reg_weight,
+        dim_e,
+        dataset["v_feat"],
+        dataset["a_feat"],
+        dataset["t_feat"],
+        dataset["oh_feat"],
+        temp_value,
+        num_neg,
+        lr_lambda,
+        np.array(dataset["warm_items"]),
+        np.array(dataset["cold_items"]),
+        num_sample,
+        device,
+    ).to(device)
     model.load_state_dict(torch.load(model_filepath))
     test_result_cold = full_ranking(
         -1,
