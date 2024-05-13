@@ -1,6 +1,7 @@
 import torch
 import math
 import gc
+import numpy as np
 import torch.nn.functional as F
 
 MIN_VALUE = -1e3
@@ -12,7 +13,8 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk,
     start_index = 0
     end_index = num_user if step == None else min(step, num_user)
 
-    all_score_matrix = torch.FloatTensor([]).to(user_tensor.device) if return_score else None
+    # all_score_matrix = torch.FloatTensor([]).to(user_tensor.device) if return_score else None
+    all_score_matrix = None
 
     all_index_of_rank_list = torch.LongTensor([])
     while end_index <= num_user and start_index < end_index:
@@ -29,7 +31,11 @@ def rank(num_user, user_item_inter, mask_items, result, is_training, step, topk,
             score_matrix[:, mask_items - num_user] = MIN_VALUE
 
         if return_score:
-            all_score_matrix = torch.cat((all_score_matrix, score_matrix), dim=0)
+            # all_score_matrix = torch.cat((all_score_matrix, score_matrix), dim=0)
+            if all_score_matrix is None:
+                all_score_matrix = score_matrix.cpu().detach().numpy()
+            else:
+                all_score_matrix = np.concatenate((all_score_matrix, score_matrix.cpu().detach().numpy()), axis=0)
 
         _, index_of_rank_list = torch.topk(score_matrix, topk)
         index_of_rank_list = index_of_rank_list.cpu()
