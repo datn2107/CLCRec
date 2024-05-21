@@ -27,30 +27,30 @@ def load_dataset(data_path, has_v=False, has_a=False, has_t=False, has_oh=False,
 
     dataset["train_all_warm_data"] = np.load(
         data_path + "/train_all_warm_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
     dataset["train_data"] = np.load(
         data_path + "/train_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
 
     dataset["val_data"] = np.load(
         data_path + "/val_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
     dataset["val_warm_data"] = np.load(
         data_path + "/val_warm_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
     dataset["val_cold_data"] = np.load(
         data_path + "/val_cold_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
 
     dataset["test_data"] = np.load(
         data_path + "/test_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
     dataset["test_warm_data"] = np.load(
         data_path + "/test_warm_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
     dataset["test_cold_data"] = np.load(
         data_path + "/test_cold_interactions.npy", allow_pickle=True
-    )
+    )[:, :2]
 
     dataset["t_feat"] = torch.from_numpy(np.load(data_path + "/t_features.npy")).type(torch.float32).to(device) if has_t else None
     dataset["a_feat"] = torch.from_numpy(np.load(data_path + "/a_features.npy")).type(torch.float32).to(device) if has_a else None
